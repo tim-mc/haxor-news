@@ -34,6 +34,8 @@ import json
 import sys
 
 import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 from .settings import supported_api_versions
 
@@ -92,7 +94,8 @@ class HackerNewsApi(object):
           HTTPError: If HTTP request failed.
 
         """
-        response = self.session.get(url)
+        # ssl_verify_config = self.config.ssl_verify
+        response = self.session.get(url, verify=False)
         if response.status_code == requests.codes.ok:
             return response
         else:

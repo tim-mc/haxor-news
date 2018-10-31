@@ -73,6 +73,9 @@ class Config(object):
 
     :type MAX_ITEM_CACHE_SIZE: int
     :param MAX_ITEM_CACHE_SIZE: The maximum size of seen comment ids cache.
+
+    :type SSL_VERIFY: bool
+    :param SSL_VERIFY: Determines whether to enforce certificate verification
     """
 
     CONFIG = '.haxornewsconfig'
@@ -97,6 +100,7 @@ class Config(object):
     CONFIG_HIRING_ID = 'hiring_id'
     CONFIG_FREELANCE_ID = 'freelance_id'
     CONFIG_SHOW_TIP = 'show_tip'
+    CONFIG_SSL_VERIFY = 'ssl_verify'
     MAX_ITEM_CACHE_SIZE = 20000
 
     def __init__(self):
@@ -105,12 +109,14 @@ class Config(object):
         self.hiring_id = 0
         self.freelance_id = 0
         self.show_tip = True
+        self.ssl_verify = False
         self._init_colors()
         self.load_config([
             self.load_config_item_ids,
             self.load_config_item_cache,
             self.load_config_colors,
             self.load_config_show_tip,
+            # self.load_config_ssl_verify,
         ])
 
     def _init_colors(self):
@@ -214,6 +220,15 @@ class Config(object):
         """
         self.show_tip = parser.getboolean(self.CONFIG_SECTION,
                                           self.CONFIG_SHOW_TIP)
+
+    def load_config_ssl_verify(self, parser):
+        """Load the ssl certificate verification config from ~/.haxornewsconfig.
+
+        :type parser: :class:`ConfigParser.RawConfigParser`
+        :param parser: An instance of `ConfigParser.RawConfigParser`.
+        """
+        self.ssl_verify = parser.getboolean(self.CONFIG_SECTION,
+                                            self.CONFIG_SSL_VERIFY)
 
     def load_color(self, parser, color_config, default):
         """Load the specified color from ~/.haxornewsconfig.
@@ -432,5 +447,7 @@ class Config(object):
         parser.set(self.CONFIG_SECTION,
                    self.CONFIG_CACHE,
                    self.item_cache)
+        parser.set(self.CONFIG_SECTION,
+                   self.CONFIG_SSL_VERIFY)
         with open(config_file_path, 'w+') as config_file:
             parser.write(config_file)

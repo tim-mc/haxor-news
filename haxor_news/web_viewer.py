@@ -21,6 +21,8 @@ from .compat import HTMLParser
 from .lib.html2text.html2text import HTML2Text
 import click
 import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
 class WebViewer(object):
@@ -105,7 +107,7 @@ class WebViewer(object):
         """
         try:
             headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}  # NOQA
-            raw_response = requests.get(url, headers=headers)
+            raw_response = requests.get(url, headers=headers, verify=False)
         except (requests.exceptions.SSLError,
                 requests.exceptions.ConnectionError) as e:
             contents = 'Error: ' + str(e) + '\n'
